@@ -1,0 +1,14 @@
+body {
+	min-height: 100vh;
+}
+
+.step {
+	display: none;
+}
+.step.active-step {
+	display: block;
+}
+
+.stepper-submit-btn {
+	display: none;
+}

@@ -168,7 +168,7 @@ function selectCurrentStepIndicator() {
 function validateInputFieldOnNextClick(DOMcurrentStepInputs, errorsObj) {
 	for (let input of DOMcurrentStepInputs) {
 		if (!input.value) {
-			errorsObj[input.name] = 'Rquired';
+			errorsObj[input.name] = 'Required';
 		} else {
 			// delete the valid properity form the errors object
 			// remove the has-error class from the parent of the input
@@ -220,7 +220,8 @@ function handleInputFieldChange(errorsObj, input, e) {
 
 		input.parentElement.classList.remove('has-error');
 		input.parentElement.querySelector('.helper-error').textContent = '';
-	} else {
+	} else if (!e.target.value && Object.keys(errorsObj.length > 0)) {
+		// else {
 		// UIstepperSubmitBtn.setAttribute('disabled', true);
 		UInextBtn.setAttribute('disabled', true);
 		input.parentElement.classList.add('has-error');

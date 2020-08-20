@@ -33,6 +33,26 @@
 					<span class="helper-error"></span>
 					<textarea name="message2" cols="10" rows="2"></textarea>
 				</div>
+
+				<div class="field-wrapper">
+					<span class="helper-error"></span>
+					<input type="checkbox" name="check" placeholder="check me" />
+				</div>
+				<div class="field-wrapper">
+					<span class="helper-error"></span>
+					<input
+						value="first"
+						type="radio"
+						name="radio"
+						placeholder="readio me"
+					/>
+					<input
+						value="second"
+						type="radio"
+						name="radio"
+						placeholder="readio me"
+					/>
+				</div>
 			</div>
 			<div class="step" data-step-index="1">
 				<h1>
@@ -71,10 +91,14 @@
 				</div>
 			</div>
 
-			<div class="btns">
-				<button type="button" class="prev-btn">Previous</button>
-				<button type="button" class="next-btn">Next</button>
-				<button type="submit" class="stepper-submit-btn">Submit</button>
+			<div class="btns__indicators">
+				<div class="btns">
+					<button type="button" class="prev-btn">Previous</button>
+					<button type="button" class="next-btn">Next</button>
+					<button type="submit" class="stepper-submit-btn">
+						Submit
+					</button>
+				</div>
 			</div>
 		</form>
 

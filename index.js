@@ -136,7 +136,10 @@ if (document.querySelector('.stepper-form')) {
 	function createStepperIndicators() {
 		const indicators = document.createElement('div');
 		indicators.classList.add('stepper-indicators');
-		UIstepperForm.appendChild(indicators);
+		UIstepperForm.querySelector('.btns__indicators').insertBefore(
+			indicators,
+			UIstepperForm.querySelector('.btns')
+		);
 		for (let i = 0; i < UIformSteps.length; i++) {
 			const indicator = document.createElement('div');
 			indicator.classList.add('indicator');
@@ -158,19 +161,58 @@ if (document.querySelector('.stepper-form')) {
 	// validate input on next click
 	function validateInputFieldOnNextClick(DOMcurrentStepInputs, errorsObj) {
 		for (let input of DOMcurrentStepInputs) {
-			if (!input.value) {
-				errorsObj[input.name] = 'Required';
-				input.parentElement.classList.add('has-error');
-				input.parentElement.querySelector('.helper-error').textContent =
-					stepErrorsObj[input.name];
-				UInextBtn.setAttribute('disabled', true);
+			if (input.type === 'checkbox') {
+				if (!input.checked) {
+					errorsObj[input.name] = 'Required';
+					input.parentElement.classList.add('has-error');
+					input.parentElement.querySelector('.helper-error').textContent =
+						stepErrorsObj[input.name];
+					UInextBtn.setAttribute('disabled', true);
+				} else {
+					delete errorsObj[input.name];
+					input.parentElement.classList.remove('has-error');
+					input.parentElement.querySelector('.helper-error').textContent = '';
+				}
+			} else if (input.type === 'radio') {
+				let UIfieldRadios = input.parentElement.querySelectorAll(
+					'input[type="radio"]'
+				);
+				let radiosHaveNoError = false;
+				// false || false || false => false
+				// false || true || false => true
+				for (let i of UIfieldRadios) {
+					radiosHaveNoError = radiosHaveNoError || i.checked;
+				}
+				// if no one of the radios checked
+				if (!radiosHaveNoError) {
+					errorsObj[UIfieldRadios[0].name] = 'Required';
+					UIfieldRadios[0].parentElement.classList.add('has-error');
+					UIfieldRadios[0].parentElement.querySelector(
+						'.helper-error'
+					).textContent = stepErrorsObj[UIfieldRadios[0].name];
+					UInextBtn.setAttribute('disabled', true);
+				} else {
+					delete errorsObj[UIfieldRadios[0].name];
+					UIfieldRadios[0].parentElement.classList.remove('has-error');
+					UIfieldRadios[0].parentElement.querySelector(
+						'.helper-error'
+					).textContent = '';
+				}
 			} else {
-				// delete the valid properity form the errors object
-				// remove the has-error class from the parent of the input
-				// and clear the helper-error span
-				delete errorsObj[input.name];
-				input.parentElement.classList.remove('has-error');
-				input.parentElement.querySelector('.helper-error').textContent = '';
+				if (!input.value) {
+					errorsObj[input.name] = 'Required';
+					input.parentElement.classList.add('has-error');
+					input.parentElement.querySelector('.helper-error').textContent =
+						stepErrorsObj[input.name];
+					UInextBtn.setAttribute('disabled', true);
+				} else {
+					// delete the valid properity form the errors object
+					// remove the has-error class from the parent of the input
+					// and clear the helper-error span
+					delete errorsObj[input.name];
+					input.parentElement.classList.remove('has-error');
+					input.parentElement.querySelector('.helper-error').textContent = '';
+				}
 			}
 		}
 	}
@@ -188,40 +230,63 @@ if (document.querySelector('.stepper-form')) {
 				e => handleInputFieldChange(errorsObj, input, e),
 				false
 			);
+			if (input.type === 'checkbox' || input.type === 'radio') {
+				input.addEventListener(
+					'click',
+					e => handleInputFieldChange(errorsObj, input, e),
+					false
+				);
+			}
 		}
 	}
 
 	function handleInputFieldChange(errorsObj, input, e) {
 		// input.setAttribute('value', e.target.value);
-		if (e.target.value && Object.keys(errorsObj).length > 0) {
-			// delete the valid properity form the errors object
-			// remove the has-error class from the parent of the input
-			// and clear the helper-error span
-			delete errorsObj[input.name];
-			input.parentElement.classList.remove('has-error');
-			input.parentElement.querySelector('.helper-error').textContent = '';
+		if (input.type === 'checkbox' || input.type === 'radio') {
+			if (e.target.checked && Object.keys(errorsObj).length > 0) {
+				delete errorsObj[input.name];
+				input.parentElement.classList.remove('has-error');
+				input.parentElement.querySelector('.helper-error').textContent = '';
+			} else if (!e.target.checked && Object.keys(errorsObj.length > 0)) {
+				console.log('abc');
+				UInextBtn.setAttribute('disabled', true);
+				errorsObj[input.name] = 'Required';
+				input.parentElement.classList.add('has-error');
+				input.parentElement.querySelector('.helper-error').textContent =
+					errorsObj[input.name];
+			} else if (e.target.checked && Object.keys(errorsObj.length === 0)) {
+				UInextBtn.removeAttribute('disabled');
+			}
+		}
+		// check if any other input of type text, number, date, file ......
+		else {
+			if (e.target.value && Object.keys(errorsObj).length > 0) {
+				// delete the valid properity form the errors object
+				// remove the has-error class from the parent of the input
+				// and clear the helper-error span
+				delete errorsObj[input.name];
+				input.parentElement.classList.remove('has-error');
+				input.parentElement.querySelector('.helper-error').textContent = '';
+			}
+
+			// if there are step errros handle them
+			// add this input to the errors object
+			// append 'has-erro' class to its parent
+			// and append the value of the error to the helper error span
+			// disable the next and submit buttons
+			else if (!e.target.value && Object.keys(errorsObj.length > 0)) {
+				console.log('abc');
+				UInextBtn.setAttribute('disabled', true);
+				errorsObj[input.name] = 'Required';
+				input.parentElement.classList.add('has-error');
+				input.parentElement.querySelector('.helper-error').textContent =
+					errorsObj[input.name];
+			} else if (e.target.value && Object.keys(errorsObj.length === 0)) {
+				UInextBtn.removeAttribute('disabled');
+			}
 		}
 
-		// if there are step errros handle them
-		// add this input to the errors object
-		// append 'has-erro' class to its parent
-		// and append the value of the error to the helper error span
-		// disable the next and submit buttons
-		else if (!e.target.value && Object.keys(errorsObj.length > 0)) {
-			UInextBtn.setAttribute('disabled', true);
-			errorsObj[input.name] = 'Required';
-			input.parentElement.classList.add('has-error');
-			input.parentElement.querySelector('.helper-error').textContent =
-				errorsObj[input.name];
-		}
-
-		if (Object.keys(errorsObj).length === 0) {
-			// UIstepperSubmitBtn.removeAttribute('disabled');
-			UInextBtn.removeAttribute('disabled');
-		} else if (!e.target.value && Object.keys(errorsObj.length > 0)) {
-			// else {
-			// UIstepperSubmitBtn.setAttribute('disabled', true);
-		}
+		console.log(errorsObj);
 	}
 
 	UIstepperForm.addEventListener('submit', e => {

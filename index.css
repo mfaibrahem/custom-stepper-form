@@ -12,3 +12,21 @@ body {
 .stepper-submit-btn {
 	display: none;
 }
+
+.stepper-indicators {
+	margin-top: 32px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.stepper-indicators .indicator {
+	width: 18px;
+	height: 18px;
+	background-color: rgba(153, 153, 153, 0.507);
+	border-radius: 50%;
+}
+
+.stepper-indicators .indicator.active-indicator {
+	background-color: rgb(141, 141, 141);
+}
